@@ -7,15 +7,17 @@ from tensorflow.keras.layers import TextVectorization
 import math
 import time
 
-model_num = 3
+model_num = 3  # 更新模型数量
 iteration_num = 20
 label_num = 20
+
 
 class ModelInput:
     def __init__(self, preds, weight, query_size):
         self.preds = preds
         self.weight = weight
         self.query_size = query_size
+
 
 def calculate_current_outputs(model_inputs):
     rows = model_inputs.query_size
@@ -29,12 +31,15 @@ def calculate_current_outputs(model_inputs):
         outputs[j] = temp_output / denominator
     return outputs
 
+
 def get_L2_distance(vec1, vec2):
     return np.linalg.norm(vec1 - vec2)
+
 
 def softmax(input_weights):
     exp_weights = np.exp(input_weights)
     return exp_weights / np.sum(exp_weights)
+
 
 def update_weights(model_inputs, outputs):
     query_size = model_inputs.query_size
@@ -53,17 +58,24 @@ def update_weights(model_inputs, outputs):
             model_inputs.weight[i] = -math.log(numerators[i] / denominator)
     return softmax(model_inputs.weight)
 
+
 def truth_discovery(model_inputs):
     for _ in range(iteration_num):
         outputs = calculate_current_outputs(model_inputs)
         model_inputs.weight = update_weights(model_inputs, outputs)
     return outputs
 
-# 载入数据集
+
+# 载入数据
 newsgroups_test = fetch_20newsgroups(subset='test')
 X_test = newsgroups_test.data[:100]
 y_test = newsgroups_test.target[:100]
 
+vectorizer = TextVectorization(max_tokens=75000, output_sequence_length=500)
+vectorizer.adapt(X_test)
+X_test_vectorized = vectorizer(X_test).numpy()
+
+# 定义 TruthDiscoveryClassifier 类
 class TruthDiscoveryClassifier(OpenAttack.Classifier):
     def __init__(self, truth_discovery_func):
         self.truth_discovery_func = truth_discovery_func
@@ -72,28 +84,27 @@ class TruthDiscoveryClassifier(OpenAttack.Classifier):
             self.boost_model = pickle.load(f)
         with open("../trained_models/20News_DecisionTree.pkl", "rb") as f:
             self.decisionTree_model = pickle.load(f)
-        self.vectorizer = TextVectorization(max_tokens=75000, output_sequence_length=500)
-        self.vectorizer.adapt(X_test)
 
     def get_pred(self, input_):
         return np.array(self.get_prob(input_)).argmax(axis=1)
 
     def get_prob(self, input_):
-        input_vectorized = self.vectorizer(input_).numpy()
-
+        input_vectorized = vectorizer(input_).numpy()
         cnn_preds = self.CNN_model.predict(input_vectorized, batch_size=32)
         boost_preds = self.boost_model.predict_proba(input_)
-        decisionTree_preds = self.decisionTree_model.predict_proba(input_)
+        decisionTree_preds = self.decisionTree_model.predict_proba(input_)        
 
         models_preds = np.array([cnn_preds, boost_preds, decisionTree_preds])
         model_inputs = ModelInput(models_preds, np.ones(model_num) * 1, len(input_))
         combined_predictions = self.truth_discovery_func(model_inputs)
         return np.array(combined_predictions)
 
+
 victim = TruthDiscoveryClassifier(truth_discovery)
 attacker = OpenAttack.attackers.DeepWordBugAttacker()
 
-dataset = [{"x": x, "y": y} for x, y in zip(X_test, y_test)]
+test_data_subset = X_test[:100]
+dataset = [{"x": x, "y": y} for x, y in zip(test_data_subset, y_test[:100])]
 
 start_time = time.time()
 attack_eval = OpenAttack.AttackEval(attacker, victim)

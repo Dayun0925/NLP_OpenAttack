@@ -1,0 +1,1 @@
+此处应该由glove.6B.100d.txt和glove.6B.50d.txt这两个文件（可手动下载）

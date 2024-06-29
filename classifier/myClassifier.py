@@ -7,7 +7,7 @@ import argparse
 import tensorflow as tf
 import OpenAttack
 import keras
-from OpenAttack.attackers import TextFoolerAttacker, DeepWordBugAttacker
+from OpenAttack.attackers import TextFoolerAttacker, DeepWordBugAttacker,TextBuggerAttacker,PWWSAttacker,GeneticAttacker
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.feature_extraction.text import CountVectorizer
 from tensorflow.keras.layers import TextVectorization
@@ -27,16 +27,16 @@ X_test = newsgroups_test.data
 y_test = newsgroups_test.target
 
 # 加载不同的模型
-cnn_model_path = "trained_models/20News_CNN.keras"
-rnn_model_path = "trained_models/20News_RNN.keras"
-dnn_model_path = "trained_models/20News_DNN.keras"
-boost_model_path = "trained_models/20news_boost.pkl"
-decision_tree_model_path = "trained_models/20News_DecisionTree.pkl"
-bagging_model_path = "trained_models/20News_bagging.pkl"
-knn_model_path = "trained_models/20News_KNN.pkl"
-rcnn_model_path = "trained_models/20News_RCNN.keras"
-svm_model_path = "trained_models/20News_SVM_probs.pkl"
-random_forest_model_path = "trained_models/20News_randomForest.pkl"
+cnn_model_path = "../trained_models/20News_CNN.keras"
+rnn_model_path = "../trained_models/20News_RNN.keras"
+dnn_model_path = "../trained_models/20News_DNN.keras"
+boost_model_path = "../trained_models/20news_boost.pkl"
+decision_tree_model_path = "../trained_models/20News_DecisionTree.pkl"
+bagging_model_path = "../trained_models/20News_bagging.pkl"
+knn_model_path = "../trained_models/20News_KNN.pkl"
+rcnn_model_path = "../trained_models/20News_RCNN.keras"
+svm_model_path = "../trained_models/20News_SVM_probs.pkl"
+random_forest_model_path = "../trained_models/20News_randomForest.pkl"
 models = {}
 if os.path.isfile(cnn_model_path):
     models['cnn'] = tf.keras.models.load_model(cnn_model_path)
@@ -44,9 +44,9 @@ if os.path.isfile(cnn_model_path):
 if os.path.isfile(rcnn_model_path):
     models['rcnn'] = tf.keras.models.load_model(rcnn_model_path)
 
-# if os.path.isfile(rnn_model_path):
-#     print(rnn_model_path)
-#     models['rnn'] = tf.keras.models.load_model(rnn_model_path)
+if os.path.isfile(rnn_model_path):
+    print(rnn_model_path)
+    models['rnn'] = tf.keras.models.load_model(rnn_model_path)
 
 if os.path.isfile(dnn_model_path):
     models['dnn'] = keras.models.load_model(dnn_model_path)
@@ -138,11 +138,20 @@ def preprocess_data(data):
 
 
 # 定义一个函数来选择和评估模型
-def evaluate_model(model_name, X_test, y_test):
+def evaluate_model(model_name, attacker_type, X_test, y_test):
+    # 定义攻击方法
+    attack_methods = {
+        "DeepWordBug": DeepWordBugAttacker(),
+        "TextBugger": TextBuggerAttacker(),
+        "PWWS": PWWSAttacker(),
+        "Genetic": GeneticAttacker()
+    }
     if model_name not in models:
         raise ValueError(f"Model '{model_name}' not found.")
+    if attacker_type not in attack_methods:
+        raise ValueError(f"Model '{attacker_type}' not found.")
 
-    attacker = DeepWordBugAttacker()
+    attacker = attack_methods[attacker_type]
     model = models[model_name]
 
     # 创建对应的分类器实例
@@ -167,8 +176,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate a text classifier with adversarial attacks.")
     parser.add_argument("-model_type", type=str, required=True,
                         help="The type of model to use (cnn, boost, decision_tree).")
+    parser.add_argument("-attacker_type", type=str, required=True,
+                        help="The type of model to use (DeepWordBug, TextBugger, PWWS, Genetic).")
     args = parser.parse_args()
 
     model_type = args.model_type.lower()
 
-    evaluate_model(model_type, X_test, y_test)
+    attacker_type = args.attacker_type
+
+    evaluate_model(model_type, attacker_type,X_test, y_test)
