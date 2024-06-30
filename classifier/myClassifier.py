@@ -7,9 +7,8 @@ import argparse
 import tensorflow as tf
 import OpenAttack
 import keras
-from OpenAttack.attackers import TextFoolerAttacker, DeepWordBugAttacker,TextBuggerAttacker,PWWSAttacker,GeneticAttacker
+from OpenAttack.attackers import DeepWordBugAttacker, TextBuggerAttacker, PWWSAttacker, GeneticAttacker
 from sklearn.datasets import fetch_20newsgroups
-from sklearn.feature_extraction.text import CountVectorizer
 from tensorflow.keras.layers import TextVectorization
 
 # 确保SSL上下文
@@ -30,7 +29,7 @@ y_test = newsgroups_test.target
 cnn_model_path = "../trained_models/20News_CNN.keras"
 rnn_model_path = "../trained_models/20News_RNN.keras"
 dnn_model_path = "../trained_models/20News_DNN.keras"
-boost_model_path = "../trained_models/20news_boost.pkl"
+boost_model_path = "../trained_models/20News_boost.pkl"
 decision_tree_model_path = "../trained_models/20News_DecisionTree.pkl"
 bagging_model_path = "../trained_models/20News_bagging.pkl"
 knn_model_path = "../trained_models/20News_KNN.pkl"
@@ -137,6 +136,18 @@ def preprocess_data(data):
     return cleaned_data
 
 
+def get_vectorizer_for_model(model, X_test):
+    # 默认的 output_sequence_length
+    output_sequence_length = 500
+
+    if model.input_shape and len(model.input_shape) > 1:
+        output_sequence_length = model.input_shape[1]
+
+    vectorizer = TextVectorization(max_tokens=75000, output_sequence_length=output_sequence_length)
+    vectorizer.adapt(X_test)
+    return vectorizer
+
+
 # 定义一个函数来选择和评估模型
 def evaluate_model(model_name, attacker_type, X_test, y_test):
     # 定义攻击方法
@@ -156,7 +167,12 @@ def evaluate_model(model_name, attacker_type, X_test, y_test):
 
     # 创建对应的分类器实例
     if isinstance(model, tf.keras.Model):
-        vectorizer = TextVectorization(max_tokens=75000, output_sequence_length=500)
+        if model_name == 'dnn':
+            vectorizer = TextVectorization(max_tokens=75000, output_sequence_length=75000)
+            print("为DNN模型设置了 vectorizer 的 output_sequence_length 为 75000")
+        else:
+            vectorizer = TextVectorization(max_tokens=75000, output_sequence_length=500)
+            print(f"为模型 {model_name} 设置了 vectorizer 的 output_sequence_length 为 500")
         vectorizer.adapt(X_test)
         victim = CustomClassifier(model, vectorizer)
     else:
@@ -184,4 +200,4 @@ if __name__ == "__main__":
 
     attacker_type = args.attacker_type
 
-    evaluate_model(model_type, attacker_type,X_test, y_test)
+    evaluate_model(model_type, attacker_type, X_test, y_test)

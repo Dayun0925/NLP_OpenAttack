@@ -79,11 +79,20 @@ X_test_vectorized = vectorizer(X_test).numpy()
 class TruthDiscoveryClassifier(OpenAttack.Classifier):
     def __init__(self, truth_discovery_func):
         self.truth_discovery_func = truth_discovery_func
+        # 神经网络模型
         self.CNN_model = tf.keras.models.load_model(r'../trained_models/20News_CNN.keras')
-        with open("../trained_models/20News_boost.pkl", "rb") as f:
-            self.boost_model = pickle.load(f)
+        self.RNN_model = tf.keras.models.load_model(r'../trained_models/20News_RNN.keras')
+        self.RCNN_model = tf.keras.models.load_model(r'../trained_models/20News_RCNN.keras')      
+        # 机器学习模型
+        with open("../trained_models/20News_SVM_probs.pkl", "rb") as f:
+            self.svm_model = pickle.load(f)
         with open("../trained_models/20News_DecisionTree.pkl", "rb") as f:
             self.decisionTree_model = pickle.load(f)
+        with open("../trained_models/20News_KNN.pkl", "rb") as f:
+            self.knn_model = pickle.load(f)
+        with open("../trained_models/20News_randomForest.pkl", "rb") as f:
+            self.randomForest_model = pickle.load(f)
+
 
     def get_pred(self, input_):
         return np.array(self.get_prob(input_)).argmax(axis=1)
@@ -91,10 +100,13 @@ class TruthDiscoveryClassifier(OpenAttack.Classifier):
     def get_prob(self, input_):
         input_vectorized = vectorizer(input_).numpy()
         cnn_preds = self.CNN_model.predict(input_vectorized, batch_size=32)
-        boost_preds = self.boost_model.predict_proba(input_)
-        decisionTree_preds = self.decisionTree_model.predict_proba(input_)        
-
-        models_preds = np.array([cnn_preds, boost_preds, decisionTree_preds])
+        svm_preds = self.svm_model.predict_proba(input_)
+        knn_preds = self.knn_model.predict_proba(input_)
+        decisionTree_preds = self.decisionTree_model.predict_proba(input_)
+        randomForest_preds = self.randomForest_model.predict_proba(input_)       
+        rcnn_preds = self.RCNN_model.predict(input_vectorized, batch_size=32)
+        rnn_preds = self.RNN_model.predict(input_vectorized, batch_size=32)
+        models_preds = np.array([cnn_preds, svm_preds, knn_preds,decisionTree_preds,randomForest_preds,rcnn_preds,rnn_preds])
         model_inputs = ModelInput(models_preds, np.ones(model_num) * 1, len(input_))
         combined_predictions = self.truth_discovery_func(model_inputs)
         return np.array(combined_predictions)

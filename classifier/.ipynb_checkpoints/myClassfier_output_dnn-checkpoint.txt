@@ -1,0 +1,95 @@
+2024-06-29 14:32:53.513216: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2024-06-29 14:32:53.553756: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-06-29 14:32:54.298505: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2024-06-29 14:32:58.076012: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22321 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090 D, pci bus id: 0000:84:00.0, compute capability: 8.9
+WARNING:tensorflow:Layer lstm will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+WARNING:tensorflow:Layer lstm_1 will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+WARNING:tensorflow:Layer lstm_2 will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+WARNING:tensorflow:Layer lstm_3 will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+WARNING:tensorflow:Layer gru_4 will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+WARNING:tensorflow:Layer gru_5 will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+WARNING:tensorflow:Layer gru_6 will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+WARNING:tensorflow:Layer gru_7 will not use cuDNN kernels since it doesn't meet the criteria. It will use a generic GPU kernel as fallback when running on GPU.
+/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/nltk/corpus/reader/wordnet.py:1183: UserWarning: The multilingual functions are not available with this Wordnet version
+  warnings.warn(
+Exception when evaluate data {'x': 'from v064mb9kubvmsdccbuffaloedu neil b gandler subject need info on 8889 bonneville organization university at buffalo lines 10 newssoftware vaxvms vnews 141 nntppostinghost ubvmsdccbuffaloedu i am a little confused on all of the models of the 8889 bonnevilles i have heard of the le se lse sse ssei could someone tell me the differences are far as features or performance i am also curious to know what the book value is for prefereably the 89 model and how much less than book value can you usually get them for in other words how much are they in demand this time of year i have heard that the midspring early summer is the best time to buy neil gandler', 'y': 7}
+Traceback (most recent call last):
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/attack_eval/utils.py", line 10, in attack_process
+    adversarial_sample = attacker(victim, data)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/attackers/classification.py", line 25, in __call__
+    origin_x = victim.get_pred([ input_["x"] ])[0]
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/base.py", line 13, in invoke_wrapper
+    return self.record_invoke(cnt, func, *args, **kwargs)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/base.py", line 63, in record_invoke
+    ret = func(self, *args, **kwargs)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/method.py", line 11, in wrapper
+    ret = func(this, *args, **kwargs)
+  File "myClassifier.py", line 86, in get_pred
+    return self.get_prob(input_).argmax(axis=1)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/base.py", line 13, in invoke_wrapper
+    return self.record_invoke(cnt, func, *args, **kwargs)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/base.py", line 63, in record_invoke
+    ret = func(self, *args, **kwargs)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/method.py", line 11, in wrapper
+    ret = func(this, *args, **kwargs)
+  File "myClassifier.py", line 93, in get_prob
+    predictions = self.model.predict(input_)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/tmp/__autograph_generated_fileoz6kuatf.py", line 15, in tf__predict_function
+    retval_ = ag__.converted_call(ag__.ld(step_function), (ag__.ld(self), ag__.ld(iterator)), None, fscope)
+ValueError: in user code:
+
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2341, in predict_function  *
+        return step_function(self, iterator)
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2327, in step_function  **
+        outputs = model.distribute_strategy.run(run_step, args=(data,))
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2315, in run_step  **
+        outputs = model.predict_step(data)
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2283, in predict_step
+        return self(x, training=False)
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+        raise e.with_traceback(filtered_tb) from None
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/input_spec.py", line 298, in assert_input_compatibility
+        raise ValueError(
+
+    ValueError: Input 0 of layer "sequential" is incompatible with the layer: expected shape=(None, 5000), found shape=(None, 500)
+
+../trained_models/20News_RNN.keras
+Traceback (most recent call last):
+  File "myClassifier.py", line 187, in <module>
+    evaluate_model(model_type, attacker_type,X_test, y_test)
+  File "myClassifier.py", line 171, in evaluate_model
+    attack_eval.eval(cleaned_dataset, visualize=True)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/attack_eval/attack_eval.py", line 211, in eval
+    probs = self.victim.get_prob([x_orig])
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/base.py", line 13, in invoke_wrapper
+    return self.record_invoke(cnt, func, *args, **kwargs)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/base.py", line 63, in record_invoke
+    ret = func(self, *args, **kwargs)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/OpenAttack/victim/method.py", line 11, in wrapper
+    ret = func(this, *args, **kwargs)
+  File "myClassifier.py", line 93, in get_prob
+    predictions = self.model.predict(input_)
+  File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/tmp/__autograph_generated_fileoz6kuatf.py", line 15, in tf__predict_function
+    retval_ = ag__.converted_call(ag__.ld(step_function), (ag__.ld(self), ag__.ld(iterator)), None, fscope)
+ValueError: in user code:
+
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2341, in predict_function  *
+        return step_function(self, iterator)
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2327, in step_function  **
+        outputs = model.distribute_strategy.run(run_step, args=(data,))
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2315, in run_step  **
+        outputs = model.predict_step(data)
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/training.py", line 2283, in predict_step
+        return self(x, training=False)
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+        raise e.with_traceback(filtered_tb) from None
+    File "/root/miniconda3/envs/rnnEnv/lib/python3.8/site-packages/keras/src/engine/input_spec.py", line 298, in assert_input_compatibility
+        raise ValueError(
+
+    ValueError: Input 0 of layer "sequential" is incompatible with the layer: expected shape=(None, 5000), found shape=(None, 500)
+
