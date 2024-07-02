@@ -1,2 +1,0 @@
-这里存放了使用noise_producer生成的各个模型的噪声文件
-运行noise_producer.py获得的

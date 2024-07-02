@@ -3,17 +3,16 @@ from sklearn.datasets import fetch_20newsgroups
 import numpy as np
 
 
-def prepare_query(size=5000,seed=0):
-    
+def prepare_query(size=1000, seed=0):
     newsgroups_test = fetch_20newsgroups(subset='test')
     assert size < len(newsgroups_test.data) and size != 0 and size is not None
-    
-    random.seed(0)
+
+    random.seed(seed)
     random_indice = random.sample(range(len(newsgroups_test.data)), size)
-    
+
     test_X = [newsgroups_test.data[i] for i in random_indice]
-    test_y = newsgroups_test.target[random_indice] 
-    print("sample labels (first 10):\n%s"%str(test_y[:10]))
+    test_y = newsgroups_test.target[random_indice]
+    print("sample labels (first 10):\n%s" % str(test_y[:10]))
     return test_X, test_y
 
 def save_ground_truth(q_size):

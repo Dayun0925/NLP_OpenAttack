@@ -1,0 +1,1 @@
+python paras_CNN.py 2>&1 | tee training_record.txt

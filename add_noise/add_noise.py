@@ -13,7 +13,7 @@ def get_data(data_path):
         if '.ipynb_checkpoints' in file:
             continue
         if data_path == "prediction":
-            model_name = file.split('.')[0]
+            model_name = file.split('_')[0]
         else:
             model_name = file.split('_')[0]
 
@@ -33,14 +33,14 @@ if __name__ == "__main__":
     t20News_category_num = 20
 
     # 添加噪声到所有预测结果
-    prediction_path = "../predict_outputs/pre_outputs"
+    prediction_path = "../predict_outputs/train_outputs"
     noise_path = "outputs/20News/query_1000/type_probs"  # 修改为正确的噪声结果路径
     model_noise = get_data(noise_path)
     model_prediction = get_data(prediction_path)
     prediction_add_noise = np.array((1000, 20), dtype=np.float64)
 
     # 新建 noise_prediction 文件夹
-    output_dir = os.path.join(os.getcwd(), "noise_prediction")
+    output_dir = os.path.join(os.getcwd(), "noise_prediction/train")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
